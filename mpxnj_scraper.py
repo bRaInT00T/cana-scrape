@@ -18,7 +18,7 @@ CATEGORY = "ALL"
 # CATEGORY = "EDIBLES"
 RETAILER_ID = "11883dc4-d7d7-4085-8e7b-ba5353eca58a" # Pennsauken Recreational
 PAGE_SIZE = 20
-OUTFILE = f"mpxnj_{CATEGORY.lower()}.json"
+OUTFILE = f"data/mpxnj_{CATEGORY.lower()}.json"
 BASE_URL = "https://mpxnj.com/wp-admin/admin-ajax.php"
 
 # ---------------- GET COOKIES ---------------- #
