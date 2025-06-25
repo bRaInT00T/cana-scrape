@@ -17,3 +17,4 @@ lib
 # Ignore all .log and test files
 *.log
 *.test.*
+*.json
