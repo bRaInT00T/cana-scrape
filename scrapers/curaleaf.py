@@ -2,9 +2,11 @@ import requests
 import json
 import time
 from pathlib import Path
+from .base import ScraperRegistry
+
 
 SITE = "curaleaf"
-data_dir = Path(__file__).resolve().parent / "data"
+data_dir = Path(__file__).resolve().parent.parent / "data/json"
 data_dir.mkdir(parents=True, exist_ok=True)
 OUTFILE = data_dir / f"{SITE}_products.json"
 BASE_URL = "https://web-ui-curaleaf.sweedpos.com/_api/proxy/Products/GetProductList"
@@ -30,6 +32,7 @@ BODY = {
     "platformOs": "web",
 }
 
+@ScraperRegistry.register
 def fetch_all_curaleaf_products():
     all_products = []
     page = 1
@@ -39,7 +42,6 @@ def fetch_all_curaleaf_products():
         response = requests.post(BASE_URL, headers=HEADERS, json=BODY)
         response.raise_for_status()
         data = response.json()
-        print(data)
         products = data.get("list", {})
         if not products:
             break

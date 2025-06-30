@@ -2,10 +2,12 @@ import requests
 import json
 import time
 from pathlib import Path
+from .base import ScraperRegistry
+
 
 SITE = "indigodispensary"
 BASE_URL = "https://api.dispenseapp.com/v1/venues/041444e70b831110/product-categories/24314d00f970b559/products"
-data_dir = Path(__file__).resolve().parent / "data"
+data_dir = Path(__file__).resolve().parent.parent / "data/json"
 data_dir.mkdir(parents=True, exist_ok=True)
 OUTFILE = data_dir / f"{SITE}_products.json"
 
@@ -30,7 +32,8 @@ PARAMS = {
     "trackSearch": "true"
 }
 
-def fetch_all_products():
+@ScraperRegistry.register
+def fetch_all_indigodispensary_products():
     all_products = []
     skip = 0
     while True:
@@ -65,4 +68,4 @@ def fetch_all_products():
     print(f"\n🎉 Saved {len(all_products)} total products to {OUTFILE}")
 
 if __name__ == "__main__":
-    fetch_all_products()
+    fetch_all_indigodispensary_products()

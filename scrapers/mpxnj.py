@@ -9,6 +9,8 @@ import os
 import re
 import requests
 import time
+from .base import ScraperRegistry
+
 
 # MPX Medical & Recreational Dispensary - Pennsauken, NJ
 # 5035 Central Hwy, Pennsauken, NJ 08109
@@ -19,9 +21,9 @@ CATEGORY = "ALL"
 # CATEGORY = "EDIBLES"
 
 # Define output file
-data_dir = Path(__file__).resolve().parent / "data"
+data_dir = Path(__file__).resolve().parent.parent / "data/json"
 data_dir.mkdir(parents=True, exist_ok=True)
-OUTFILE = data_dir / f"mpxnj_{CATEGORY.lower()}.json"
+OUTFILE = data_dir / f"mpxnj_products.json"
 RETAILER_ID = "11883dc4-d7d7-4085-8e7b-ba5353eca58a" # Pennsauken Recreational
 PAGE_SIZE = 20
 BASE_URL = "https://mpxnj.com/wp-admin/admin-ajax.php"
@@ -138,7 +140,8 @@ def fetch_products_page(cookies, nonce, page):
     return response.json()
 
 # ---------------- SCRAPE ALL PRODUCTS ---------------- #
-def scrape_all_products():
+@ScraperRegistry.register
+def fetch_all_mpxnj_products():
     """
     Scrape all products from the MPX NJ website.
 
@@ -195,4 +198,4 @@ def scrape_all_products():
 
 # ---------------- RUN ---------------- #
 if __name__ == "__main__":
-    scrape_all_products()
+    fetch_all_mpxnj_products()

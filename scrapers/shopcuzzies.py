@@ -2,9 +2,12 @@ import requests
 import json
 import time
 from pathlib import Path
+from .base import ScraperRegistry
+
+
 SITE = "shopcuzzies"
 URL = "https://www.shopcuzzies.com/wp-json/joint-ecommerce/v1/products/5731/_search"
-data_dir = Path(__file__).resolve().parent / "data"
+data_dir = Path(__file__).resolve().parent.parent / "data/json"
 data_dir.mkdir(parents=True, exist_ok=True)
 OUTFILE = data_dir / f"{SITE}_products.json"
 
@@ -156,6 +159,7 @@ BASE_PAYLOAD = {
   "sort": [{ "potencyThcRangeHigh": "asc" }]
 }
 
+@ScraperRegistry.register
 def fetch_all_shopcuzzies_products():
     all_products = []
     page_size = BASE_PAYLOAD["size"]

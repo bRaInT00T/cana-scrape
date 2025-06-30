@@ -3,11 +3,12 @@ import time
 import json
 from pathlib import Path
 from datetime import datetime, timezone
+from .base import ScraperRegistry
+
 
 # Unverified if limit is manipulable
-
 SITE = "brotherlybud"
-data_dir = Path(__file__).resolve().parent / "data"
+data_dir = Path(__file__).resolve().parent.parent / "data/json"
 data_dir.mkdir(parents=True, exist_ok=True)
 OUTFILE = data_dir / f"{SITE}_products.json"
 URL = "https://brotherlybud.com/wp-admin/admin-ajax.php"
@@ -37,6 +38,7 @@ BASE_DATA = {
     "filter_attributes[sort_order]": "PRICE_ASC"
 }
 
+@ScraperRegistry.register
 def fetch_all_brotherlybud_products():
     all_products = []
     page = 1

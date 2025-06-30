@@ -18,3 +18,5 @@ lib
 *.log
 *.test.*
 *.json
+share
+*.csv

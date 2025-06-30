@@ -3,12 +3,19 @@ import pandas as pd
 import json
 from pathlib import Path
 
+SHOP = "brotherlybud"
+
 # Load JSON data
-data_path = Path(__file__).resolve().parent.parent / "data" / "brotherlybud_products.json"
+# "../data/brotherlybud_products.json"
+data_path = Path(__file__).resolve().parent.parent / "data/json" / f"{SHOP}_products.json"
 with open(data_path) as f:
     products = json.load(f)
 
 df = pd.json_normalize(products, sep=".")
+
+# Add dispensary name and location columns
+df["dispensary"] = "Brotherly Bud"
+df["location"] = "500 N Black Horse Pike, Mt Ephraim, NJ 08059"  # Update if you want to be more precise
 
  # Extract priceRec from variants[0] if available
 if "variants" in df.columns:
@@ -30,7 +37,14 @@ if "strainType" not in df.columns:
 if "effects" not in df.columns:
     df["effects"] = None
 
-st.header("Brotherlybud Products")
+# Normalize and export selected columns to CSV before filtering
+export_cols = ["name", "category", "brand", "strainType", "priceRec", "dispensary", "location"]
+for col in export_cols:
+    if col not in df.columns:
+        df[col] = None
+df[export_cols].to_csv(Path(__file__).resolve().parent.parent / "data/csv" / "brotherlybud_products_normalized.csv", index=False)
+
+st.header("Brotherlybud Products", divider="rainbow")
 
 # Step 1: Filter by Category
 selected_categories = st.multiselect(
@@ -71,11 +85,13 @@ else:
         "Price Range",
         min_price_val,
         max_price_val,
-        (min_price_val, max_price_val)
+        (min_price_val, max_price_val),
+        step=1.00,
+        format="%.0f",
     )
     filtered_df = filtered_df[(filtered_df["priceRec"] >= min_price) & (filtered_df["priceRec"] <= max_price)]
 
 # Display results
 st.subheader(f"Showing {len(filtered_df)} products")
-st.dataframe(filtered_df[["name", "category", "brand", "strainType", "priceRec"]], hide_index=True, selection_mode="multi-row")
+st.dataframe(filtered_df[["name", "category", "brand", "strainType", "priceRec", "dispensary", "location"]], hide_index=True, selection_mode="multi-row")
 st.bar_chart(filtered_df["priceRec"].dropna())
