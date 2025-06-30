@@ -17,6 +17,7 @@ lib
 # Ignore all .log and test files
 *.log
 *.test.*
-*.json
+# *.json
 share
-*.csv
+data/csv/*.csv
+etc
