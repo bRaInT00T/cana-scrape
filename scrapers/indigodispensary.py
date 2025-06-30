@@ -18,7 +18,7 @@ HEADERS = {
     "origin": f"https://www.{SITE}.com",
     "referer": f"https://www.{SITE}.com/",
     "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
-    "x-prospect-token": "e4258cf5-7c34-4bf4-816e-9ee023fcd194"
+    "x-prospect-token": "e4258cf5-7c34-4bf4-816e-9ee023fcd194",
 }
 
 PARAMS = {
@@ -29,8 +29,9 @@ PARAMS = {
     "group": "true",
     "enable": "true",
     "orderPickUpType": "IN_STORE",
-    "trackSearch": "true"
+    "trackSearch": "true",
 }
+
 
 @ScraperRegistry.register
 def fetch_all_indigodispensary_products():
@@ -43,7 +44,7 @@ def fetch_all_indigodispensary_products():
         response = requests.get(BASE_URL, headers=HEADERS, params=params)
         response.raise_for_status()
         data = response.json()
-        
+
         try:
             products = data.get("data", [])
         except (KeyError, TypeError):
@@ -66,6 +67,7 @@ def fetch_all_indigodispensary_products():
         json.dump(all_products, f, indent=2)
 
     print(f"\n🎉 Saved {len(all_products)} total products to {OUTFILE}")
+
 
 if __name__ == "__main__":
     fetch_all_indigodispensary_products()

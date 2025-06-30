@@ -3,6 +3,7 @@ import time
 import json
 from pathlib import Path
 from datetime import datetime, timezone
+
 # from .base import ScraperRegistry
 
 # https://blulight.com/
@@ -37,18 +38,10 @@ payload = {
     "strictMedicalCustomerType": False,
     "filters": {
         "price": {
-            "between": {
-                "min": 2,
-                "max": 500000,
-                "includeMin": True,
-                "includeMax": True
-            }
+            "between": {"min": 2, "max": 500000, "includeMin": True, "includeMax": True}
         }
     },
-    "sortBy": {
-        "field": "price",
-        "descending": False
-    }
+    "sortBy": {"field": "price", "descending": False},
 }
 
 response = requests.post(url, headers=headers, json=payload)
@@ -58,4 +51,4 @@ with open(OUTFILE, "w") as f:
     json.dump(response.json(), f, indent=2)
 
 print(f"✅ Data saved to {OUTFILE}")
-print(len(response.json()['data']))
+print(len(response.json()["data"]))

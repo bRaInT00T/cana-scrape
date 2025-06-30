@@ -24,9 +24,10 @@ CATEGORY = "ALL"
 data_dir = Path(__file__).resolve().parent.parent / "data/json"
 data_dir.mkdir(parents=True, exist_ok=True)
 OUTFILE = data_dir / f"mpxnj_products.json"
-RETAILER_ID = "11883dc4-d7d7-4085-8e7b-ba5353eca58a" # Pennsauken Recreational
+RETAILER_ID = "11883dc4-d7d7-4085-8e7b-ba5353eca58a"  # Pennsauken Recreational
 PAGE_SIZE = 20
 BASE_URL = "https://mpxnj.com/wp-admin/admin-ajax.php"
+
 
 # ---------------- GET COOKIES ---------------- #
 def get_valid_cookies():
@@ -51,7 +52,8 @@ def get_valid_cookies():
         driver.execute_script("localStorage.setItem('age_confirm', 'true');")
         driver.get(f"https://mpxnj.com")
         time.sleep(0.5)  # Just enough to set the cookie
-        return {c['name']: c['value'] for c in driver.get_cookies()}
+        return {c["name"]: c["value"] for c in driver.get_cookies()}
+
 
 # ---------------- FETCH NONCE ---------------- #
 def fetch_nonce_with_selenium():
@@ -107,13 +109,17 @@ def fetch_products_page(cookies, nonce, page):
     """
 
     headers = {
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'Origin': 'https://mpxnj.com',
-        'Referer': f'https://mpxnj.com/shop/?pagination=1&sort=NAME_ASC&retailer_id={RETAILER_ID}&menu_type=RECREATIONAL&collection_type=PICKUP',
-        'X-Requested-With': 'XMLHttpRequest',
-        'User-Agent': 'Mozilla/5.0'
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "Origin": "https://mpxnj.com",
+        "Referer": f"https://mpxnj.com/shop/?pagination=1&sort=NAME_ASC&retailer_id={RETAILER_ID}&menu_type=RECREATIONAL&collection_type=PICKUP",
+        "X-Requested-With": "XMLHttpRequest",
+        "User-Agent": "Mozilla/5.0",
     }
-    current_time = datetime.now(timezone.utc).isoformat(timespec='milliseconds').replace("+00:00", "Z")
+    current_time = (
+        datetime.now(timezone.utc)
+        .isoformat(timespec="milliseconds")
+        .replace("+00:00", "Z")
+    )
     payload = {
         "action": "wizard_show_products",
         "wizard_data[age_confirm]": "true",
@@ -132,12 +138,15 @@ def fetch_products_page(cookies, nonce, page):
         # "prod_categories[categories]": CATEGORY,
         "search_key_word": "",
         "filter_attributes[search_key_word]": "",
-        "filter_attributes[sort_order]": "NAME_ASC"
+        "filter_attributes[sort_order]": "NAME_ASC",
     }
 
-    response = requests.post(BASE_URL, headers=headers, cookies=cookies, data=urlencode(payload))
+    response = requests.post(
+        BASE_URL, headers=headers, cookies=cookies, data=urlencode(payload)
+    )
     response.raise_for_status()
     return response.json()
+
 
 # ---------------- SCRAPE ALL PRODUCTS ---------------- #
 @ScraperRegistry.register
@@ -164,15 +173,15 @@ def fetch_all_mpxnj_products():
         nonce = "b5de8efb96"
 
     first_page_data = fetch_products_page(cookies, nonce, page=1)
-    total = first_page_data['data'].get('products_count', 0)
+    total = first_page_data["data"].get("products_count", 0)
     total_pages = (total + PAGE_SIZE - 1) // PAGE_SIZE
     print(f"📦 Total products: {total} | Pages: {total_pages}")
 
-    all_products = first_page_data['data'].get('products_list', [])
+    all_products = first_page_data["data"].get("products_list", [])
 
     for page in range(2, total_pages + 1):
         page_data = fetch_products_page(cookies, nonce, page)
-        all_products.extend(page_data['data'].get('products_list', []))
+        all_products.extend(page_data["data"].get("products_list", []))
         time.sleep(0.5)  # polite delay
 
     if os.path.isfile(OUTFILE):
@@ -190,11 +199,12 @@ def fetch_all_mpxnj_products():
         if pid and pid not in seen:
             seen.add(pid)
             deduped.append(p)
-    deduped = sorted(deduped, key=lambda p: p['variants'][0]['priceRec'])
+    deduped = sorted(deduped, key=lambda p: p["variants"][0]["priceRec"])
     with open(OUTFILE, "w") as f:
         json.dump(deduped, f, indent=2)
 
     print(f"✅ Saved {len(deduped)} unique products to {OUTFILE}")
+
 
 # ---------------- RUN ---------------- #
 if __name__ == "__main__":

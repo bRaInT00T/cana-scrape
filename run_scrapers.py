@@ -22,6 +22,7 @@ def main():
     for name, secs in timings:
         print(f"{name}: {secs:.2f} seconds")
 
+
 if __name__ == "__main__":
     main()
     with open("data/last_updated.txt", "w") as f:

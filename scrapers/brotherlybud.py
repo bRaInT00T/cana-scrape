@@ -18,9 +18,11 @@ HEADERS = {
     "origin": f"https://{SITE}.com",
     "referer": f"https://{SITE}.com/shop/?pagination=1&sort=NAME_ASC&retailer_id=14beadc1-5ad4-49df-b412-7fe5118669cc&menu_type=RECREATIONAL&collection_type=PICKUP",
     "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
-    "x-requested-with": "XMLHttpRequest"
+    "x-requested-with": "XMLHttpRequest",
 }
-current_time = datetime.now(timezone.utc).isoformat(timespec='milliseconds').replace("+00:00", "Z")
+current_time = (
+    datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z")
+)
 BASE_DATA = {
     "action": "wizard_show_products",
     "wizard_data[age_confirm]": "true",
@@ -35,8 +37,9 @@ BASE_DATA = {
     "prod_categories[sort_order]": "PRICE_ASC",
     "search_key_word": "",
     "filter_attributes[search_key_word]": "",
-    "filter_attributes[sort_order]": "PRICE_ASC"
+    "filter_attributes[sort_order]": "PRICE_ASC",
 }
+
 
 @ScraperRegistry.register
 def fetch_all_brotherlybud_products():
@@ -64,6 +67,7 @@ def fetch_all_brotherlybud_products():
         json.dump(all_products, f, indent=2)
 
     print(f"\n🎉 Saved {len(all_products)} products to {OUTFILE}")
+
 
 if __name__ == "__main__":
     fetch_all_brotherlybud_products()

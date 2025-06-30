@@ -25,12 +25,13 @@ HEADERS = {
 BODY = {
     "filters": {},
     "page": 1,
-    "pageSize": 100, # No cap discovered on page size.  Settiing to 100 to be nice.
-    "sortingMethodId": 2, # Sort by price (low to high)
+    "pageSize": 100,  # No cap discovered on page size.  Settiing to 100 to be nice.
+    "sortingMethodId": 2,  # Sort by price (low to high)
     "searchTerm": "",
     "saleType": "Recreational",
     "platformOs": "web",
 }
+
 
 @ScraperRegistry.register
 def fetch_all_curaleaf_products():
@@ -59,6 +60,7 @@ def fetch_all_curaleaf_products():
         json.dump(all_products, f, indent=2)
 
     print(f"\n🎉 Saved {len(all_products)} total products to {OUTFILE}")
+
 
 if __name__ == "__main__":
     fetch_all_curaleaf_products()

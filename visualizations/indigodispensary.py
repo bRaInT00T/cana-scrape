@@ -7,7 +7,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Load the JSON file
-data_path = Path(__file__).resolve().parent.parent / "data" / "indigodispensary_products.json"
+data_path = (
+    Path(__file__).resolve().parent.parent / "data" / "indigodispensary_products.json"
+)
 with open(data_path) as f:
     products = json.load(f)
 
@@ -42,7 +44,9 @@ if df["priceWithDiscounts"].dropna().empty:
     st.sidebar.warning("No price data available.")
     min_price, max_price = 0.0, 0.0
 else:
-    min_price_val, max_price_val = float(df["priceWithDiscounts"].min()), float(df["priceWithDiscounts"].max())
+    min_price_val, max_price_val = float(df["priceWithDiscounts"].min()), float(
+        df["priceWithDiscounts"].max()
+    )
     min_price, max_price = st.sidebar.slider(
         "Price Range",
         min_price_val,
@@ -63,15 +67,22 @@ if selected_strains:
     filtered_df = filtered_df[filtered_df["strainType"].isin(selected_strains)]
 if selected_effects:
     filtered_df = filtered_df[
-        filtered_df["effects"].apply(lambda e: any(effect in e for effect in selected_effects))
+        filtered_df["effects"].apply(
+            lambda e: any(effect in e for effect in selected_effects)
+        )
     ]
-filtered_df = filtered_df[(filtered_df["priceWithDiscounts"] >= min_price) & (filtered_df["priceWithDiscounts"] <= max_price)]
+filtered_df = filtered_df[
+    (filtered_df["priceWithDiscounts"] >= min_price)
+    & (filtered_df["priceWithDiscounts"] <= max_price)
+]
 
 # Display results
 st.title("Indigo Dispensary Products")
 st.subheader(f"Showing {len(filtered_df)} products")
 
-renamed_df = filtered_df[["name", "productUrl", "brand", "type", "strainType", "priceWithDiscounts"]].rename(
+renamed_df = filtered_df[
+    ["name", "productUrl", "brand", "type", "strainType", "priceWithDiscounts"]
+].rename(
     columns={
         "name": "Name",
         "productUrl": "Link",
@@ -93,7 +104,7 @@ st.dataframe(
     hide_index=True,
     column_config={
         "Link": st.column_config.LinkColumn("Link", display_text="Link"),
-    }
+    },
 )
 
 
@@ -109,15 +120,16 @@ chart_data = (
 )
 
 # Create stacked column chart
-chart = alt.Chart(chart_data).mark_bar().encode(
-    x=alt.X("priceWithDiscounts:O", title="Price ($)", sort="ascending"),
-    y=alt.Y("count:Q", title="Number of Products"),
-    color=alt.Color("strainType:N", title="Strain Type"),
-    tooltip=["priceWithDiscounts", "strainType", "count"]
-).properties(
-    title="Product Count per Price by Strain Type",
-    width=700,
-    height=400
+chart = (
+    alt.Chart(chart_data)
+    .mark_bar()
+    .encode(
+        x=alt.X("priceWithDiscounts:O", title="Price ($)", sort="ascending"),
+        y=alt.Y("count:Q", title="Number of Products"),
+        color=alt.Color("strainType:N", title="Strain Type"),
+        tooltip=["priceWithDiscounts", "strainType", "count"],
+    )
+    .properties(title="Product Count per Price by Strain Type", width=700, height=400)
 )
 
 st.altair_chart(chart, use_container_width=True)
